@@ -72,8 +72,14 @@ raw data → preprocessing → model → output
 
 ## 9. What is unclear / confusing
 (write questions, not answers)
-- README: where am I supposed to put these flags (e.g. `--beam_search`)?
-- How do I define chorus length? 
+1. Where should command-line flags (e.g., --beam_search) be specified when running the model?
+2. How is the length of a generated solo defined? How does the model know when to stop?
+3. What is the format of the model’s output? Is it MusicXML, MIDI, or another representation?
+
+Suggested by ChatGPT:
+1. How exactly are MusicXML durations converted into model timesteps?
+2. How does the model represent mid-measure chord changes for conditioning?
+3. How does the model encode notes that span multiple timesteps?
 
 ## 10. Ideas for blues adaptation
 (do not evaluate yet)
