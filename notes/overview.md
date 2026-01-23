@@ -26,29 +26,32 @@
     Harmony is represented symbolically via MusicXML chord annotations (root + chord kind), which are later encoded numerically to condition the model.
 
 - Rhythm assumptions
-    Rhythm is discretized into fixed time steps.
-    The exact temporal resolution (e.g. 8th notes vs 16th notes) is not yet clear.
+
+    Rhythmic information is extracted from symbolic MusicXML scores. Rhythm is represented symbolically using quantized score divisions.
+    Durations are integer multiples of a base temporal unit, with notes spanning multiple timesteps when necessary.
+
     Expressive timing (swing feel, microtiming) is not explicitly modeled
 
 ## 3. Input to the model
 - What is a single training example? 
-    - an .xml file. I opened one. MuseScore is mentioned as a relevant software. 
-    Each training example consists of a melodic sequence aligned with a chord progression.
-    At each time step, the model receives information about the current harmonic context and the previous melodic state.
-    Melody and harmony are represented symbolically and encoded numerically for the network.
-    The precise feature representation per timestep is still under inspection.
-
-
 - What musical information is included?
 - How long is a sequence?
+
+    Each training sequence is derived from MusicXML measures.
+
+    - Melody is represented as sequences of notes with explicit pitch and duration.
+    - Rhythm is quantized using score divisions; notes may span multiple timesteps.
+    - Harmony is given symbolically and can change mid-measure; the model conditions on the current chord at each timestep.
+
+
 
 ## 4. Output of the model
 - What is the model predicting?
 - One note? One bar? A distribution?
 
-    At each time step, the model predicts the next melodic event.
-    This is likely represented as a probability distribution over possible note values (e.g., pitch classes or interval-based representations).
-    During generation, notes are sampled from this distribution to produce an improvised melodic line.
+    The model predicts the next melodic token at each timestep, taking into account the current chord and previous melodic state.
+    Tokens may represent pitch and/or note duration, and notes that span multiple timesteps are handled with a hold-state or duration-aware encoding.
+
 
 ## 5. Data flow (high level)
 raw data → preprocessing → model → output
