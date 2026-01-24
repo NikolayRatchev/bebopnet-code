@@ -37,11 +37,37 @@
 - What musical information is included?
 - How long is a sequence?
 
+#### A single training example (Hypothesis)
+    One training example likely consists of a fixed-length sequence of musical timesteps.
+    At each timestep, the input includes the current harmony and the previously generated note (or rest).
+    The training target is the next note in the sequence (pitch + duration).
+    The sequence length determines how much musical context the model can use.
+
+    Hypotheticsl mental model:
+    Input (timesteps 1–8)  →  Output (timestep 9)
+    Input (timesteps 2–9)  →  Output (timestep 10)
+    Input (timesteps 3–10) →  Output (timestep 11)
+
+
     Each training sequence is derived from MusicXML measures.
 
     - Melody is represented as sequences of notes with explicit pitch and duration.
     - Rhythm is quantized using score divisions; notes may span multiple timesteps.
     - Harmony is given symbolically and can change mid-measure; the model conditions on the current chord at each timestep.
+
+#### How is musical time represented? 
+    Musical time is discretized into a fixed number of timesteps per measure.
+    Although MusicXML files specify different `<divisions>` values, these are normalized during preprocessing so that all examples share a common temporal grid.
+    Notes span multiple timesteps according to their duration.
+
+#### How is harmony represented?
+Harmony is represented symbolically using chord roots and chord qualities.
+Chord labels may change within a measure.
+Each timestep is associated with the currently active harmony.
+
+#### What counts for one sequence?
+The timestep timelines constructed from MusicXML can be segmented into overlapping sequences.
+Each sequence serves as one training example, where the model learns to predict the next note given the recent musical context and harmonic information.
 
 
 

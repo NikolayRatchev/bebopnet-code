@@ -72,3 +72,10 @@ Chord →    Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab  Ab 
 Note  →    R   R   R   R   R   R   R   R   R   R   R   R   G5  –   Ab5 –   G5  –   F5  –   –   E5  –   –
 Dur   →                                                    2       2       2       3            3
 Hold  →                                                    ✓       ✓       ✓       ✓  ✓   ✓   ✓
+
+
+Summary (Day 2):
+- Each 4/4 measure is discretized into a fixed number of timesteps (e.g. 24).
+- MusicXML `<divisions>` differ across files but are normalized during preprocessing.
+- Notes span multiple timesteps via duration.
+- Harmony is symbolic and may change mid-measure.
