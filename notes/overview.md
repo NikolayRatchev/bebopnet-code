@@ -32,12 +32,25 @@
 
     Expressive timing (swing feel, microtiming) is not explicitly modeled
 
+Update 2026-01-24
+BebopNet models jazz improvisation as a sequence of event-based timesteps, where each timestep is a vector containing melodic, rhythmic, temporal, and harmonic information.
+
 ## 3. Input to the model
 - What is a single training example? 
 - What musical information is included?
 - How long is a sequence?
 
-#### A single training example (Hypothesis)
+### Internal representation (from gather_data_from_xml.py)
+
+Each timestep is represented as a fixed-length vector containing:
+- pitch (MIDI)
+- duration (quarter-note units)
+- offset within bar
+- explicit harmonic context (root, scale mask, chord mask, chord type)
+
+
+
+#### A single training example 
     One training example likely consists of a fixed-length sequence of musical timesteps.
     At each timestep, the input includes the current harmony and the previously generated note (or rest).
     The training target is the next note in the sequence (pitch + duration).
@@ -47,6 +60,10 @@
     Input (timesteps 1–8)  →  Output (timestep 9)
     Input (timesteps 2–9)  →  Output (timestep 10)
     Input (timesteps 3–10) →  Output (timestep 11)
+
+    Update (2025-01-2024)
+    One training example corresponds to a sequence extracted from a MusicXML file and stored as a numerical representation inside the training pickle.
+    Each example represents a fixed-length sequence of timesteps used for next-note prediction.
 
 
     Each training sequence is derived from MusicXML measures.
@@ -71,6 +88,8 @@ Each sequence serves as one training example, where the model learns to predict 
 
 
 
+
+
 ## 4. Output of the model
 - What is the model predicting?
 - One note? One bar? A distribution?
@@ -81,6 +100,20 @@ Each sequence serves as one training example, where the model learns to predict 
 
 ## 5. Data flow (high level)
 raw data → preprocessing → model → output
+
+The pipeline is:
+``` scss
+MusicXML files
+   ↓
+gather_data_from_xml.py
+   ↓
+Python objects (lists / dicts / arrays)
+   ↓
+pickle (.pkl)
+```
+
+Preprocessing is performed by the script `gather_data_from_xml.py`, which parses MusicXML files, converts them into a numerical sequence representation, and serializes the resulting datasets using pickle.
+
 
 ## 6. Model architecture (conceptual)
 - Type (RNN, LSTM, Transformer, etc.)
@@ -106,6 +139,18 @@ Suggested by ChatGPT:
 1. How exactly are MusicXML durations converted into model timesteps?
 2. How does the model represent mid-measure chord changes for conditioning?
 3. How does the model encode notes that span multiple timesteps?
+
+### 2025-01-24
+From README.md
+1. The README mentions pickling XML files:
+> Collect the dataset from xml files into a network-friendly format and pickle it
+ but it is unclear where XML parsing and numerical encoding are implemented in this repository.
+
+2. The repository provides two model architectures (LSTM and Transformer),
+   likely to compare a classical sequence model with a more modern attention-based approach.
+
+3. The README mentions configuration via YAML files, but no example config
+   or loading mechanism is provided in the repository.
 
 ## 10. Ideas for blues adaptation
 (do not evaluate yet)
