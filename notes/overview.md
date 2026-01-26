@@ -104,6 +104,8 @@ Note durations are discretized into a finite vocabulary using VectorXmlConverter
 End-of-sequence (EOS)
 BebopNet appends a special end-of-sequence (EOS) vector to each training example. During generation, the model predicts EOS as a classification target, signaling termination of the solo. EOS is represented as a dedicated vector outside the normal pitch, duration, offset, and chord ranges.
 
+Although BebopNet includes an explicit end-of-sequence (EOS) token and is capable of learning when to terminate a solo, in the experiments reported by Hakimi et al. the solo length is externally constrained to a fixed duration of two choruses. Thus, EOS serves primarily as a modeling and training mechanism, while musical form is enforced at generation time.
+
 
 ## 4. Output of the model
 - What is the model predicting?
