@@ -35,6 +35,10 @@
 Update 2026-01-24
 BebopNet models jazz improvisation as a sequence of event-based timesteps, where each timestep is a vector containing melodic, rhythmic, temporal, and harmonic information.
 
+Update 2026-01-26
+BebopNet does not advance time by ticks.
+It advances time by musical events, and each event describes its own timing.
+
 ## 3. Input to the model
 - What is a single training example? 
 - What musical information is included?
@@ -87,7 +91,18 @@ The timestep timelines constructed from MusicXML can be segmented into overlappi
 Each sequence serves as one training example, where the model learns to predict the next note given the recent musical context and harmonic information.
 
 
+Parsing library
+MusicXML files are parsed using the Music21 library, which is imported indirectly via vectorXmlConverter.py. Objects such as notes, rests, chord symbols, offsets, durations, and ties follow Music21’s semantics.
 
+#### Offset representation
+BebopNet uses Music21’s absolute offset only temporarily. During preprocessing, the offset is reduced modulo the bar length (4 beats) and quantized into a fixed 48-step grid per bar. The model therefore encodes where a note starts within the bar, but not the bar index itself. Global time progression is represented implicitly by sequence order.
+
+Duration encoding
+Note durations are discretized into a finite vocabulary using VectorXmlConverter. Each unique duration observed in the dataset is mapped to an integer index. This allows duration prediction to be treated as a classification task rather than regression, ensuring stable training and deterministic decoding during generation.
+
+
+End-of-sequence (EOS)
+BebopNet appends a special end-of-sequence (EOS) vector to each training example. During generation, the model predicts EOS as a classification target, signaling termination of the solo. EOS is represented as a dedicated vector outside the normal pitch, duration, offset, and chord ranges.
 
 
 ## 4. Output of the model
