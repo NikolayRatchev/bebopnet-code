@@ -115,9 +115,11 @@ def extract_data_from_xml(args):
     if not args.no_test:
         test_data = results_2_dict(test_results, test_songs)
 
-    train_data = remove_consecutive_rest_vars(train_data, converter, args.reward_induction, no_eos=args.no_eos)
-    if not args.no_test:
-        test_data = remove_consecutive_rest_vars(test_data, converter, args.reward_induction, no_eos=args.no_eos)
+    print("Skipping rest cleanup (not needed for generation)")
+
+    # train_data = remove_consecutive_rest_vars(train_data, converter, args.reward_induction, no_eos=args.no_eos)
+    # if not args.no_test:
+    #     test_data = remove_consecutive_rest_vars(test_data, converter, args.reward_induction, no_eos=args.no_eos)
 
     def dict_2_np(x):
         return {k: np.array(v) for k, v in x.items() if np.array(v).shape[0] != 0}

@@ -12,6 +12,8 @@ import numpy as np
 import music21 as m21
 import lxml.etree as le
 import torch
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') # update by NR following ChatGPT
+
 
 from jazz_rnn.B_next_note_prediction.generation_utils import song_params_dict, pop_bt2silence
 from jazz_rnn.B_next_note_prediction.music_generator import MusicGenerator
@@ -121,7 +123,9 @@ def generate_from_xml(args):
         with open(os.path.join(args.model_dir, args.checkpoint), 'rb') as f:
             model = MemTransformerLM(**kwargs)
             model_path = os.path.join(args.model_dir, args.checkpoint)
-            model.load_state_dict(torch.load(model_path))
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # update by NR following ChatGPT
+            model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))  # update by NR following ChatGPT
+            model.to(device)  # update by NR following ChatGPT
         model.converter = converter
     else:
         with open(os.path.join(args.model_dir, args.checkpoint), 'rb') as f:
@@ -131,7 +135,8 @@ def generate_from_xml(args):
                 model = torch.load(f)
 
     if args.cuda:
-        model.cuda()
+        # model.cuda()
+        model.to(device) # update by NR following ChatGPT
 
     model.eval()
 

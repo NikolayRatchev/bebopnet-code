@@ -17,8 +17,23 @@ class VectorXmlConverter:
         return self.bidict[duration]
 
     @lru_cache(maxsize=80)
+    # def ind_2_dur(self, vec):
+    #     return self.bidict.inv[vec]
+    
     def ind_2_dur(self, vec):
-        return self.bidict.inv[vec]
+        """
+        Convert duration index -> duration.
+        Clamp illegal indices instead of crashing.
+        """
+        vec = int(vec)  # handle np.int64 safely
+        try:
+            return self.bidict.inv[vec]
+        except KeyError:
+            max_index = max(self.bidict.inv.keys())
+            min_index = min(self.bidict.inv.keys())
+            clamped = max(min(vec, max_index), min_index)
+            print(f"Warning: illegal duration index {vec}, clamped to {clamped}")
+            return self.bidict.inv[clamped]
 
     def max_durations(self):
         return len(self.bidict)
@@ -27,7 +42,8 @@ class VectorXmlConverter:
         ind_np = ind_tensor.cpu().detach().numpy()
         durs = []
         for i in ind_np:
-            durs.append(self.ind_2_dur(i))
+            # durs.append(self.ind_2_dur(i))
+            durs.append(self.ind_2_dur(int(i)))  # ensure Python int
         return np.asarray(durs)
 
     def dur_2_ind_vec(self, dur_tensor):

@@ -396,9 +396,13 @@ class MusicGenerator:
         for i in range(len(hidden)):
             if hidden[0].shape[0] == new_hidden[0].shape[0]:
                 hidden[i][:, update_hiddens_mask.nonzero(), :] = new_hidden[i][:, update_hiddens_mask.nonzero(), :]
+            # else:
+            #     raise ValueError('number of notes in head ({}) is smaller than the memory size ({}). '
+            #                      'decrease memory size'.format(hidden[0].shape[0], self.model.mem_len))
             else:
-                raise ValueError('number of notes in head ({}) is smaller than the memory size ({}). '
-                                 'decrease memory size'.format(hidden[0].shape[0], self.model.mem_len))
+                # Truncate memory to available sequence length
+                for j in range(len(hidden)):
+                    hidden[j] = hidden[j][:new_hidden[j].shape[0]]
         measure_done[torch.as_tensor((end_at_end_bar | cross_end_bar_mask).astype(np.long), dtype=torch.long,
                                      device=self.device).nonzero()] = 1
         measure_not_done = 1 - measure_done

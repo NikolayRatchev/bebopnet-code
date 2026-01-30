@@ -6,7 +6,7 @@ The framework addresses three related problems:
 2. Eliciting listener preferences through interactive feedback.
 3. Adapting generated improvisations to individual listener tastes via reward induction.
 
-*Note*. 2. & 3. are extensions beyon the base model; the core contribution of BebopNet is the conditional jazz improvisation system.
+*Note*. 2. & 3. are extensions beyond the base model; the core contribution of BebopNet is the conditional jazz improvisation system.
 
 ---
 
@@ -48,7 +48,7 @@ It advances time by musical events, and each event describes its own timing.
 
 
 ### What musical information is included?
-Internal representation (from gather_data_from_xml.py)
+Internal representation (from `gather_data_from_xml.py`)
 Each musical event is represented as a fixed-length vector containing:
 - pitch (MIDI)
 - duration (quarter-note units)
@@ -184,7 +184,7 @@ At each timestep, the input vector includes:
 
 ## 7. Training loop (conceptual)
 - Loss function
-- What “correct” means here
+- What "correct" means here
 - When does training stop?
 
 BebopNet is trained autoregressively on sequences of symbolic musical events extracted from real jazz solos. Each training sequence consists of a variable-length list of note-event vectors terminated by an end-of-sequence (EOS) token.
@@ -202,8 +202,6 @@ Training terminates based on standard criteria such as validation loss convergen
 
 
 ## 8. Generation
-- How generation differs from training
-- What is fixed vs free
 
 During generation, BebopNet operates autoregressively without access to ground-truth future events. At each step, the model conditions on a fixed-length window of its previously generated note events together with the externally provided harmonic context to predict the next symbolic musical event.
 
@@ -211,9 +209,9 @@ The generation process proceeds by repeatedly sampling or selecting the next not
 
 While the model includes an end-of-sequence (EOS) token and is capable of predicting when a solo should terminate, musical form is typically enforced externally during generation. In the experiments reported by Hakimi et al., generated solos are constrained to a fixed length of two choruses by stopping generation after a predetermined number of bars or beats, rather than relying on EOS predictions.
 
-Decoding decoding strategies—such as greedy decoding, stochastic sampling with temperature or nucleus (top-p) sampling, and beam search—can be used to select the next event at each step. hese choices significantly influence the balance between coherence and diversity in the generated improvisation.
+Decoding decoding strategies—such as greedy decoding, stochastic sampling with temperature or nucleus (top-p) sampling, and beam search—can be used to select the next event at each step. These choices significantly influence the balance between coherence and diversity in the generated improvisation.
 
-
+Solo length is externally enforced at the measure loop level (`generate_measures`). The model never predicts 'bar end' or 'chorus end'.
 ---
 
 
@@ -246,3 +244,6 @@ From README.md
 
 ## 10. Ideas for blues adaptation
 (do not evaluate yet)
+
+
+The pickle was created with a very old `bidict`, creating problems to generate music. 

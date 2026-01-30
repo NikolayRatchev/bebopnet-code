@@ -326,15 +326,16 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         #### compute attention probability
         if attn_mask is not None and attn_mask.any().item():
+            mask_bool = attn_mask.bool() # convert to boolean, update by NR following ChatGPT
             if attn_mask.dim() == 2:
                 attn_score = attn_score.float().masked_fill(
-                    attn_mask[None, :, :, None], -float('inf')).type_as(attn_score)
+                    mask_bool[None, :, :, None], -float('inf')).type_as(attn_score)
             elif attn_mask.dim() == 3:
                 attn_score = attn_score.float().masked_fill(
-                    attn_mask[:, :, :, None], -float('inf')).type_as(attn_score)
+                    mask_bool[:, :, :, None], -float('inf')).type_as(attn_score)
             elif attn_mask.dim() == 4:
                 attn_score = attn_score.float().masked_fill(
-                    attn_mask, -float('inf')).type_as(attn_score)
+                    mask_bool, -float('inf')).type_as(attn_score)
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = self.dropatt(attn_prob)
@@ -616,7 +617,8 @@ class MemTransformerLM(nn.Module):
 
         # eos has no chord, so we need to mask it out
         eos_mask = eos_mask.view(-1)
-        eos_mask = 1 - eos_mask
+        # eos_mask = 1 - eos_mask
+        eos_mask = torch.logical_not(eos_mask) # update by NR following ChatGPT
         chord_pitches = chord_pitches.view(-1, 13)
         chord_pitch_idxs_no_eos = chord_pitches.nonzero()[:, 1] + OFFSET_TO_5OCT
         chord_pitch_idxs = torch.zeros(shape[0] * shape[1], 4, device=chord_pitches.device, dtype=chord_pitches.dtype)
