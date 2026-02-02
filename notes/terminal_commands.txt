@@ -1,16 +1,27 @@
 
-# generate pkl files! 
+# generate pkl files - dataset + converter
   
 python -m jazz_rnn.A_data_prep.gather_data_from_xml `
   --xml_dir resources/dataset `
-  --out_dir training_results/transformer/model `
-  --no_test
+  --out_dir training_results/transformer/model 
+
 
 
 # generate MIDI files: 
 
 python -m jazz_rnn.B_next_note_prediction.generate_from_xml `
-  --song giant `
+  --song donna `
   --model_dir training_results/transformer/model `
   --checkpoint model.pt `
   --save_dir output 
+
+
+# training 
+
+python -m jazz_rnn.B_next_note_prediction.train `
+  --data-pkl training_results/transformer/model `
+  --save-dir training_results/transformer/model `
+  --no-cuda `
+  --epochs 30 `
+  --bptt 16
+

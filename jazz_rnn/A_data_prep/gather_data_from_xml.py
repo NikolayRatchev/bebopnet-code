@@ -3,6 +3,7 @@ import argparse
 import glob
 import math
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE" # suggested by ChatGPT
 import copy
 import pickle
 from functools import partial
